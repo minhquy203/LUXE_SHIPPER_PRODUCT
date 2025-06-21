@@ -10,6 +10,7 @@ export default function Page() {
     const fetchUser = async () => {
 
       const userStr = Cookies.get("user");
+      console.log(userStr)
       let token;
       if (userStr) {
         const user = JSON.parse(decodeURIComponent(userStr));

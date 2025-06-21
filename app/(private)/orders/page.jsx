@@ -157,12 +157,14 @@ export default function Home() {
     async function fetchOrders() {
       try {
         const token = localStorage.getItem("token");
+        console.log(token)
         const res = await fetch("http://localhost:3000/api/shipper/order/get-my-orders", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(res)
         const data = await res.json();
         setOrders(data);
 
