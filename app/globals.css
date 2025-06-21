@@ -1,21 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+.sidebar {
+  transition: all 0.3s ease;
+}
+
+.sidebar-collapsed {
+  width: 80px;
+}
+
+.sidebar-expanded {
+  width: 280px;
+}
+
+.content-expanded {
+  /* margin-left: 280px; */
+  width: calc(100% - 280px);
+}
+
+.content-collapsed {
+  /* margin-left: 80px; */
+  width: calc(100% - 80px);
+}
+
+.active-menu {
+  background-color: rgba(193, 154, 107, 0.1);
+  border-left: 4px solid #c19a6b;
+}
+
+.order-dang_giao {
+  @apply bg-[#F7F4C4] text-[#FBBC05];
+}
+
+.order-da_giao {
+  @apply bg-[#EBFFEC] text-[#34A853];
+}
+
+.order-giao_that_bai {
+  @apply bg-[#FFD3D3] text-[#EC0015];
+}
+
+.order-giao_hang_thanh_cong {
+  @apply bg-[#D1D5DC] text-[#000000]/70;
+}
+
+.stock-active {
+  @apply bg-green-100 text-green-800;
+}
+
+.stock-low_stock {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.stock-out_of_stock {
+  @apply bg-red-100 text-red-800;
+}
+
+.sidebar-collapsed .menu-text {
+  display: none;
+}
+
+.sidebar-collapsed .flex-col-colapsed {
+  @apply flex-col;
+}
+
+.sidebar-collapsed .flex-colapsed-center {
+  @apply justify-center;
 }

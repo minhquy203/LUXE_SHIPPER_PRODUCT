@@ -8,8 +8,15 @@ export default {
   theme: {
     extend: {
       colors: {
+        primary: '#000000',
+        secondary: '#f8f8f8',
+        accent: '#c19a6b',
         background: "var(--background)",
         foreground: "var(--foreground)",
+      },
+      fontFamily: {
+        'playfair': ['Playfair Display', 'serif'],
+        'montserrat': ['Montserrat', 'sans-serif'],
       },
     },
   },
