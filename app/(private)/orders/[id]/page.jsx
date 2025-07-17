@@ -1,48 +1,48 @@
-export default function OrderDetailPopup({ order, setIsOpen }) {
-  const handleChangeStatus = async (orderId, newStatus) => {
-    try {
-      const res = await fetch(`http://localhost:3000/api/shipper/order/update-status/${orderId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (!res.ok) return;
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
-      alert("Lỗi khi cập nhật trạng thái");
-    }
-  };
+'use client';
+import {useParams} from "next/navigation";
+import {useUpdateOrderStatus, useCancelOrder, useGetOrderById} from "@/api/orders";
+import { ORDERS_BY_ID_QUERY_KEY } from "@/api/orders/useGetOrderById";
+import {useQueryClient} from "@tanstack/react-query";
+import { ALLOW_UPDATE_STATUS, STATUS_TRANSITIONS } from "@/constants/orders";
 
-  const handleCancelOrder = async (orderId) => {
-    try {
-      const res = await fetch(`http://localhost:3000/api/shipper/order/cancel-order/${orderId}`, {
-        method: "PUT",
-      });
+export default function Page() {
+  const queryClient = useQueryClient();
 
-      if (!res.ok) {
-        alert("Không thể huỷ đơn hàng.");
-        return;
-      }
+    const {id} = useParams();
 
-      const data = await res.json();
+    const {order} = useGetOrderById(id);
+    const {handleUpdateOrderStatus} = useUpdateOrderStatus();
+    const {handleCancelOrder} = useCancelOrder();
 
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
-      alert("Lỗi khi huỷ đơn hàng");
-    }
-  };
+    const handleChangeStatus = async (orderId) => {
+       handleUpdateOrderStatus(orderId, {
+         onSuccess: () => {
+           queryClient.invalidateQueries([ORDERS_BY_ID_QUERY_KEY, orderId]);
+           alert("Cập nhật trạng thái Thành Công");
+         }, 
+         onError: () => {
+           alert("Lỗi khi cập nhật trạng thái");
+         }
+       })
+    };
+
+    const handleCancel = async (orderId) => {
+      handleCancelOrder(orderId, {
+        onSuccess: () => {
+          queryClient.invalidateQueries([ORDERS_BY_ID_QUERY_KEY, orderId]);
+          alert("Hủy đơn hàng");
+        }, 
+        onError: () => {
+          alert("Lỗi khi hủy đơn hàng");
+        }
+      })
+    };
+
+  if (!order) return null;
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-30 px-4 flex items-center">
-      <div className="w-[800px] max-w-full border border-black flex flex-col gap-6 p-6 mx-auto bg-white relative">
-        <button
-          onClick={() => setIsOpen(false)}
-          className="absolute top-3 right-3"
-        >
-          <i className="fa-solid fa-xmark text-3xl"></i>
-        </button>
+    <div className="w-4/5 max-w-full mx-auto flex flex-col gap-6 bg-white mt-20 py-4">
+      <div className="py-4 px-6 space-y-10">
         <h2 className="text-lg text-black font-bold">Chi Tiết Đơn Hàng</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-2">
@@ -108,17 +108,33 @@ export default function OrderDetailPopup({ order, setIsOpen }) {
               </p>
             </div>
           </div>
-          {order.trang_thai === "Đang giao" && (
-            <div className="grid grid-cols-2 gap-2 items-end">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-black font-medium">
+              Trạng thái Đơn Hàng
+            </label>
+            <div>
+            <span
+                        className={`px-2 py-2 text-sm rounded-md text-center min-w-[120px] inline-block order-${order.trang_thai_don_hang?.toLowerCase()
+                          .normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "")
+                          .replace(/đ/g, "d")
+                          .replace(/\s+/g, "_")}`}
+                      >
+                        {order.trang_thai_don_hang === "Shipper đã nhận hàng" ? 'Nhận Đơn' : order.trang_thai_don_hang}
+                      </span>
+            </div>
+          </div>
+          {ALLOW_UPDATE_STATUS.includes(order.trang_thai_don_hang) && (
+            <div className="grid grid-cols-2 col-span-2 mt-6 gap-2 items-end">
               <div
                 className="bg-[#EBFFEC] text-[#34A853] text-center py-2 px-4 cursor-pointer rounded-md"
-                onClick={() => handleChangeStatus(order._id, "Đã giao")}
+                onClick={() => handleChangeStatus(order._id)}
               >
-                Đã giao hàng
+                {STATUS_TRANSITIONS[order.trang_thai_don_hang]}
               </div>
               <div
                 className="bg-[#FFD3D3] text-[#EC0015] text-center py-2 px-4 cursor-pointer rounded-md"
-                onClick={() => handleCancelOrder(order._id)}
+                onClick={() => handleCancel(order._id)}
               >
                 Hủy Đơn Hàng
               </div>

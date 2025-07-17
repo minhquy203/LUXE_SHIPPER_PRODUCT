@@ -1,21 +1,22 @@
 "use client";
-import { useEffect, useState } from "react";
 import MenuItem from "./MenuItem";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useMe } from "@/api/account";
+import Cookies from "js-cookie";
 
 const MENU_ITEMS = [
   {
     label: "",
     items: [
       {
-        name: "Thông Tin Tài Khoản",
+        name: "Đơn Hàng",
         href: "/",
-        icon: "fas fa-tachometer-alt",
+        icon: "fas fa-receipt",
       },
       {
-        name: "Tất Cả Đơn Hàng",
-        href: "/orders",
+        name: "Thống Kê Đơn Hàng",
+        href: "/orders-history",
         icon: "fas fa-receipt",
       },
     ],
@@ -32,40 +33,16 @@ const MENU_ITEMS = [
   },
 ];
 
-const convertRoleLabel = (role) => {
-  switch (role) {
-    case "khach_hang":
-      return "Khách hàng";
-    case "shipper":
-      return "Shipper";
-    case "admin":
-      return "Admin";
-    default:
-      return "Người dùng";
-  }
-};
-
-
 export default function Sidebar({ isToggledSidebar, setIsToggledSidebar }) {
   const pathname = usePathname();
-  const [user, setUser] = useState(null);
+  const {user} = useMe();
   const router = useRouter();
-
-  useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (error) {
-      console.error("Lỗi lấy thông tin user:", error);
-    }
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");      // Xoá user lưu trong localStorage
-    localStorage.removeItem("token");      // nếu có access token
-    router.push("/sign-in");               // Điều hướng về trang đăng nhập
+    localStorage.removeItem("token");     // Xoá token lưu trong localStorage
+    Cookies.remove("user");               // Xoá user lưu trong Cookie
+    router.push(process.env.NEXT_PUBLIC_LOGIN);                      // Điều hướng về trang đăng nhập
   };
 
   return (
@@ -96,7 +73,7 @@ export default function Sidebar({ isToggledSidebar, setIsToggledSidebar }) {
           <div id="user-info">
             <p className="font-medium menu-text">{user?.ho_ten || "..."}</p>
             <p className="text-xs text-gray-500 menu-text">
-              {convertRoleLabel(user?.vai_tro) || "Shipper"}
+              Shipper
             </p>
           </div>
         </div>

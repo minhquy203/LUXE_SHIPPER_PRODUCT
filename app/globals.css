@@ -48,6 +48,10 @@ body {
   @apply bg-[#F7F4C4] text-[#FBBC05];
 }
 
+.order-nhan_don, .order-shipper_da_nhan_hang {
+  @apply bg-amber-50 text-amber-800 border-amber-200;
+}
+
 .order-da_giao {
   @apply bg-[#EBFFEC] text-[#34A853];
 }

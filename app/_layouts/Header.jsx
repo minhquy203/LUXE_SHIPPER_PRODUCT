@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Header() {
   return (
     <header className="bg-white shadow-sm py-4 px-6 flex items-center justify-between">
@@ -10,13 +12,13 @@ export default function Header() {
           <i className="fas fa-bell"></i>
         </button>
 
-        <div className="relative">
+        <Link href="/profile" className="relative">
           <button className="flex items-center space-x-2 focus:outline-none">
             <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
               <i className="fas fa-user text-gray-500"></i>
             </div>
           </button>
-        </div>
+        </Link>
       </div>
     </header>
   );
