@@ -1,50 +1,76 @@
 "use client";
 import { useGetOrders } from "@/api/orders";
 import { useEffect, useState } from "react";
-import {  StatsItem } from "./_components";
+import { StatsItem } from "./_components";
 import Link from "next/link";
 
 export default function Home() {
-  const {orders} = useGetOrders();  
+  const [query, setQuery] = useState({ from: "", to: "" });
+
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const { orders } = useGetOrders(query);
   const [stats, setStats] = useState([]);
 
   useEffect(() => {
-        const tongDon = orders?.length;
-        const dangGiao = orders?.filter((o) => o.trang_thai_don_hang === "Đang giao").length;
-        const daNhan = orders?.filter(
-          (o) => o.trang_thai_don_hang === "Shipper đã nhận hàng" || o.trang_thai_don_hang === "Đang giao"
-        ).length;
-        
-        const daGiao = orders?.filter((o) => o.trang_thai_don_hang === "Giao hàng thành công")
-          .reduce((sum, o) => sum + (o.tong_tien || 0), 0);
+    if(from && to) {
+      if(from > to) {
+        alert("Ngày không hợp lệ");
+        setFrom("");
+        setTo("");
+        return;
+      }
 
-        setStats([
-          {
-            label: "Tổng Đơn Hàng",
-            value: tongDon?.toString(),
-            icon: "fas fa-receipt",
-            color: "bg-green-100 text-green-500",
-          },
-          {
-            label: "Đơn hàng đã nhận",
-            value: daNhan?.toString(),
-            icon: "fa-regular fa-square-plus",
-            color: "bg-blue-100 text-blue-500",
-          },
-          {
-            label: "Đơn hàng đang giao",
-            value: dangGiao?.toString(),
-            icon: "fas fa-spinner",
-            color: "bg-yellow-100 text-yellow-500",
-          },
-          {
-            label: "Đã giao",
-            value: `₫${daGiao?.toLocaleString("vi-VN") ?? ''}`,
-            icon: "fas fa-dollar-sign",
-            color: "bg-purple-100 text-purple-500",
-          },
-        ]);
+      setQuery({ from, to });
+    }
 
+    if(!from && !to) {
+      setQuery({from: "", to: ""});
+    }
+
+  }, [from, to]);
+
+  useEffect(() => {
+    const tongDon = orders?.length;
+    const dangGiao = orders?.filter(
+      (o) => o.trang_thai_don_hang === "Đang giao"
+    ).length;
+    const daNhan = orders?.filter(
+      (o) =>
+        o.trang_thai_don_hang === "Shipper đã nhận hàng" ||
+        o.trang_thai_don_hang === "Đang giao"
+    ).length;
+
+    const daGiao = orders
+      ?.filter((o) => o.trang_thai_don_hang === "Giao hàng thành công")
+      .reduce((sum, o) => sum + (o.tong_tien || 0), 0);
+
+    setStats([
+      {
+        label: "Tổng Đơn Hàng",
+        value: tongDon?.toString(),
+        icon: "fas fa-receipt",
+        color: "bg-green-100 text-green-500",
+      },
+      {
+        label: "Đơn hàng đã nhận",
+        value: daNhan?.toString(),
+        icon: "fa-regular fa-square-plus",
+        color: "bg-blue-100 text-blue-500",
+      },
+      {
+        label: "Đơn hàng đang giao",
+        value: dangGiao?.toString(),
+        icon: "fas fa-spinner",
+        color: "bg-yellow-100 text-yellow-500",
+      },
+      {
+        label: "Đã giao",
+        value: `₫${daGiao?.toLocaleString("vi-VN") ?? ""}`,
+        icon: "fas fa-dollar-sign",
+        color: "bg-purple-100 text-purple-500",
+      },
+    ]);
   }, [orders]);
 
   return (
@@ -68,6 +94,35 @@ export default function Home() {
         </div>
 
         <div className="overflow-x-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 px-6 mt-4 mb-10">
+            <div className="flex space-x-2 w-full md:w-auto">
+              <input
+                type="date"
+                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                value={from}
+                onChange={(e) => setFrom(e.target.value)}
+              />
+              <span className="flex items-center">đến</span>
+              <input
+                type="date"
+                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                value={to}
+                onChange={(e) => setTo(e.target.value)}
+              />
+              {from && to && (
+                <button
+                  className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90"
+                  onClick={() => {
+                    setFrom("");
+                    setTo("");
+                  }}
+                >
+                  Hủy
+                </button>
+              )}
+             
+            </div>
+          </div>
           <table className="w-full text-center">
             <thead className="bg-gray-50">
               <tr>
@@ -100,7 +155,9 @@ export default function Home() {
             <tbody className="divide-y divide-gray-100">
               {orders?.map((order) => (
                 <tr key={order._id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{order.ma_don_hang}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {order.ma_don_hang}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {order?.id_customer?.ho_ten || "Ẩn danh"}
                   </td>
@@ -114,21 +171,27 @@ export default function Home() {
                     {order.tong_tien.toLocaleString("vi-VN")} VNĐ
                   </td>
                   <td className="px-6 py-4 font-bold whitespace-nowrap">
-                    {order.phuong_thuc_thanh_toan === "COD" ? "Tiền mặt" : "VNPay"}
+                    {order.phuong_thuc_thanh_toan === "COD"
+                      ? "Tiền mặt"
+                      : "VNPay"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap space-x-2 w-[200px]">
-                      <span
-                        className={`px-2 py-2 text-xs rounded-md text-center min-w-[120px] inline-block order-${order.trang_thai_don_hang?.toLowerCase()
-                          .normalize("NFD")
-                          .replace(/[\u0300-\u036f]/g, "")
-                          .replace(/đ/g, "d")
-                          .replace(/\s+/g, "_")}`}
-                      >
-                        {order.trang_thai_don_hang === "Shipper đã nhận hàng" ? 'Nhận Đơn' : order.trang_thai_don_hang}
-                      </span>
+                    <span
+                      className={`px-2 py-2 text-xs rounded-md text-center min-w-[120px] inline-block order-${order.trang_thai_don_hang
+                        ?.toLowerCase()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .replace(/đ/g, "d")
+                        .replace(/\s+/g, "_")}`}
+                    >
+                      {order.trang_thai_don_hang === "Shipper đã nhận hàng"
+                        ? "Nhận Đơn"
+                        : order.trang_thai_don_hang}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap space-x-2 w-[200px]">
-                    <Link href={`/orders/${order._id}`}
+                    <Link
+                      href={`/orders/${order._id}`}
                       className="text-black/50 bg-[#FCF4F4] rounded-full hover:underline p-1.5"
                     >
                       <i className="fa-solid fa-eye"></i>
@@ -140,7 +203,6 @@ export default function Home() {
           </table>
         </div>
       </div>
-      
     </main>
   );
 }

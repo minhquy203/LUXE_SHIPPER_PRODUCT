@@ -97,8 +97,7 @@ export default function Home() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap space-x-2 w-[200px]">
                   <span
-                        className={`px-2 py-2 text-xs rounded-md text-center min-w-[120px] inline-block cursor-pointer order-${STATUS_TRANSITIONS[order.trang_thai_don_hang]
-                          .toLowerCase()
+                        className={`px-2 py-2 text-xs rounded-md text-center min-w-[120px] inline-block cursor-pointer order-${STATUS_TRANSITIONS[order.trang_thai_don_hang]?.toLowerCase()
                           .normalize("NFD")
                           .replace(/[\u0300-\u036f]/g, "")
                           .replace(/đ/g, "d")

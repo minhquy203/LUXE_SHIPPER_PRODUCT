@@ -42,7 +42,7 @@ export default function Page() {
 
   return (
     <div className="w-4/5 max-w-full mx-auto flex flex-col gap-6 bg-white mt-20 py-4">
-      <div className="py-4 px-6 space-y-10">
+      <div className="py-4 px-6 space-y-10 max-h-[70vh] overflow-y-auto">
         <h2 className="text-lg text-black font-bold">Chi Tiết Đơn Hàng</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-2">
