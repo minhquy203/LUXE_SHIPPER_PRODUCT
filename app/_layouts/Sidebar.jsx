@@ -35,7 +35,7 @@ const MENU_ITEMS = [
 
 export default function Sidebar({ isToggledSidebar, setIsToggledSidebar }) {
   const pathname = usePathname();
-  const {user} = useMe();
+  const { user } = useMe();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -67,7 +67,7 @@ export default function Sidebar({ isToggledSidebar, setIsToggledSidebar }) {
         </div>
 
         <div className="px-6 py-5 border-b border-gray-100 flex items-center space-x-3 flex-col-colapsed">
-        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
             <img
               src={user?.avatar} // hoặc thay bằng URL cụ thể
               alt="Avatar"
