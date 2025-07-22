@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useMe } from "@/api/account";
 import Cookies from "js-cookie";
+import Image from "next/image";
+import Link from "next/link";
 
 const MENU_ITEMS = [
   {
@@ -53,9 +55,17 @@ export default function Sidebar({ isToggledSidebar, setIsToggledSidebar }) {
     >
       <div className="flex flex-col h-full">
         <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between flex-colapsed-center">
-          <div className="text-xl font-bold font-playfair items-center menu-text">
-            <span className="text-[#EBBD5B]">LUXE</span>{" "}
-            <span className="text-lg font-semibold">SHIPPER</span>
+          <div className="text-xl font-bold font-playfair flex items-center menu-text"> {/* Thêm 'flex items-center' vào đây */}
+            <Link href='/' className="text-2xl font-bold font-playfair flex items-center">
+              <Image
+                src="https://res.cloudinary.com/dohwmkapy/image/upload/v1753079396/logo_cho_thang_phuc_tbzvgq.svg"
+                alt="LUXE Logo"
+                width={60}
+                height={30}
+                className="title-decoration pb-1"
+              />
+            </Link>
+            <span className="text-2xl uppercase ml-2">Shipper</span>
           </div>
           <button
             id="toggle-sidebar"
