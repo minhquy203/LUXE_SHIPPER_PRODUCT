@@ -26,17 +26,6 @@ axiosPrivate.interceptors.request.use(
   (config) => {
     let token = localStorage.getItem("token");
 
-    if (!token) {
-      const userStr = Cookies.get("user");
-
-      if (userStr) {
-        const user = JSON.parse(decodeURIComponent(userStr));
-        token = user.access_token;
-      }
-
-      localStorage.setItem("token", token);
-    }
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -53,6 +42,9 @@ axiosPrivate.interceptors.response.use(
 
     if (status === 401 || status === 403) {
       localStorage.removeItem("token");
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
     }
 
     return Promise.reject(error);

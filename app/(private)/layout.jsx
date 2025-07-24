@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
               />
               <div
                 id="main-content"
-                className={`flex flex-col overflow-hidden ${
+                className={`flex flex-col overflow-x-hidden ${
                   isToggledSidebar ? "content-expanded" : "content-collapsed"
                 }`}
               >

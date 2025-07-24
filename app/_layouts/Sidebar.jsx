@@ -3,7 +3,6 @@ import MenuItem from "./MenuItem";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useMe } from "@/api/account";
-import Cookies from "js-cookie";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -41,10 +40,8 @@ export default function Sidebar({ isToggledSidebar, setIsToggledSidebar }) {
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("user");      // Xoá user lưu trong localStorage
-    localStorage.removeItem("token");     // Xoá token lưu trong localStorage
-    Cookies.remove("user");               // Xoá user lưu trong Cookie
-    router.push(process.env.NEXT_PUBLIC_LOGIN);                      // Điều hướng về trang đăng nhập
+    localStorage.removeItem("token");      // Xoá user lưu trong localStorage
+    router.push('/login');                      // Điều hướng về trang đăng nhập
   };
 
   return (
@@ -79,7 +76,7 @@ export default function Sidebar({ isToggledSidebar, setIsToggledSidebar }) {
         <div className="px-6 py-5 border-b border-gray-100 flex items-center space-x-3 flex-col-colapsed">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
             <img
-              src={user?.avatar} // hoặc thay bằng URL cụ thể
+              src={user?.avatar != '' ? user?.avatar : "/avatar.jpg"} // hoặc thay bằng URL cụ thể
               alt="Avatar"
               className="w-full h-full object-cover"
             />

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useEffect } from "react";
+import Link from "next/link";
 
 // 1. Định nghĩa schema validation với Yup
 const schema = yup.object().shape({
@@ -61,7 +62,7 @@ export default function Page() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-4/5 max-w-full mx-auto flex flex-col gap-6 bg-white mt-20 py-4 h-[600px] overflow-y-auto"
+      className="w-4/5 max-w-full mx-auto flex flex-col gap-6 bg-white mt-20 py-4"
     >
       <div className="px-6">
         <h1 className="text-xl font-bold text-black mb-1">Thông tin cá nhân</h1>
@@ -143,7 +144,9 @@ export default function Page() {
         </div>
 
         {/* Nút Lưu */}
-        <div className="space-y-1 md:col-span-2 flex justify-end">
+        <div className=" md:col-span-2 flex justify-end gap-4">
+        <Link href="/profile/change-password" className="text-center py-2 px-4 cursor-pointer rounded-md w-fit bg-[#E6F0FF] text-[#1A73E8]">Đổi mật khẩu</Link>
+
           <button
             type="submit"
             className="bg-[#EBFFEC] text-[#34A853] text-center py-2 px-4 cursor-pointer rounded-md w-fit"
