@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 // Base URL từ env
-const baseURL = process.env.API_URL || "http://localhost:3000/api";
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
 // 📌 Axios Public - không có token
 export const axiosPublic = axios.create({
